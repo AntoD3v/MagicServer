@@ -1,6 +1,7 @@
 package fr.antodev.magicserver.executors;
 
 import fr.antodev.magicserver.servers.Server;
+import fr.antodev.magicserver.support.FileUtil;
 import fr.antodev.magicserver.support.Logs;
 import fr.antodev.magicserver.support.Options;
 import redis.clients.jedis.Jedis;
@@ -49,6 +50,7 @@ public class ServerExecutor extends Thread {
         while (processus != null){
             if(!processus.isAlive()){
                 Logs.info("Close and destroy server " + server.getName());
+                destroyServer();
                 break;
             }
             try {
@@ -79,6 +81,10 @@ public class ServerExecutor extends Thread {
             e.printStackTrace();
         }
         this.started = true;
+    }
+
+    public void destroyServer(){
+        FileUtil.deleteDir(new File(Options.HOSTED+"/"+ server.getName()+"/"));
     }
 
     public void sendCommand(String command) {

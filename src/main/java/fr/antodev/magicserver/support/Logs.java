@@ -47,18 +47,26 @@ public class Logs implements Runnable {
         LocalTime currentTime = LocalTime.now();
         String timestamp = currentTime.format(timeFormatter);
 
-        AnsiConsole.systemUninstall();
-        if(msg.startsWith("ERROR")) {
-            System.out.println(ansi().eraseScreen().fg(RED).a(timestamp + " " + msg));
+        if(isLinux()){
+            System.out.println(timestamp + " " + msg);
+        }else {
+            AnsiConsole.systemUninstall();
+            if (msg.startsWith("ERROR")) {
+                System.out.println(ansi().eraseScreen().fg(RED).a(timestamp + " " + msg));
+            } else if (msg.startsWith("WARN")) {
+                System.out.println(ansi().eraseScreen().fg(CYAN).a(timestamp + " " + msg));
+            } else {
+                System.out.println(ansi().eraseScreen().fg(DEFAULT).a(timestamp + " " + msg));
+            }
+            AnsiConsole.systemInstall();
         }
-        else if(msg.startsWith("WARN")) {
-            System.out.println(ansi().eraseScreen().fg(CYAN).a(timestamp + " " + msg));
-        }
-        else {
-            System.out.println(ansi().eraseScreen().fg(DEFAULT).a(timestamp + " " + msg));
-        }
-        AnsiConsole.systemInstall();
 
+    }
 
+    private static boolean isLinux() {
+        if(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
+            return false;
+        else
+            return true;
     }
 }
